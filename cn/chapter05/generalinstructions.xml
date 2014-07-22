@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../general.ent">
+  %general-entities;
+]>
+
+<sect1 id="ch-tools-generalinstructions">
+  <?dbhtml filename="generalinstructions.html"?>
+
+  <title>通用编译说明</title>
+
+  <para>当构建软件包时，指令中有一些假设：</para>
+
+  <itemizedlist>
+
+  <listitem>
+    <para>一些软件包在编译前需要打补丁，但是只有在要避免出现问题时才需要补丁。一个补丁通常在本章和下一章都需要用到，但有时也只在其中一章需要用到。因此，如果下载补丁的指示似乎缺失了，不需要理会。在应用补丁的时候可能遇到有关 <emphasis>offset</emphasis> 和 <emphasis>fuzz</emphasis> 的警告信息。不必担心这些警告，因为补丁仍然成功被应用。</para>
+  </listitem>
+
+  <listitem>
+    <para>在编译大多数软件包的过程中，会有一些警告从屏幕上滚过。这是正常的，可以安全地忽略。这些警告正如他们表示的——有关不推荐但并非无效的 C 或 C++ 语法的警告。 C 的标准经常改变，而有的程序仍在使用老的标准。这并不是一个问题，但确实会出现警告。</para>
+  </listitem>
+
+  <listitem>
+    <para>最后检查一次 <envar>LFS</envar> 环境变量是否被正确设置：</para>
+
+<screen role="nodump"><userinput>echo $LFS</userinput></screen>
+
+    <para>确保输出结果是 LFS 分区的挂载路径，我们的例子中是 <filename class="directory">/mnt/lfs</filename> 。</para>
+  </listitem>
+
+  <listitem>
+
+    <para>最后强调两点：</para>
+
+    <important>
+
+      <para>构建指令认为 <xref linkend='pre-hostreqs'/> ，包括符号链接，都被正确设置：</para>
+
+      <itemizedlist role='important'>
+
+        <listitem override='bullet'><para><command>bash</command> 是正在使用的 shell 。</para></listitem>
+
+        <listitem override='bullet'><para><command>sh</command> 是 <command>bash</command> 的符号链接。</para></listitem>
+
+        <listitem override='bullet'><para><command>/usr/bin/awk</command> 是 <command>gawk</command> 的符号链接。</para></listitem>
+
+        <listitem override='bullet'><para><command>/usr/bin/yacc</command> 是 <command>bison</command> 或者执行 bison 的小脚本的符号链接。</para></listitem>
+
+      </itemizedlist>
+    </important>
+
+    <important>
+      <para>重新强调构建过程：</para>
+
+      <orderedlist numeration="arabic" spacing="compact">
+        <listitem>
+          <para>把所有的源代码和补丁放在可以被 chroot 环境访问的一个目录内，例如 <filename class="directory">/mnt/lfs/sources/</filename> 。<emphasis>不要</emphasis>把源码放在 <filename class="directory">/mnt/lfs/tools/</filename> 内。</para>
+        </listitem>
+        <listitem>
+          <para>切换到源码目录。</para>
+        </listitem>
+        <listitem id='buildinstr' xreflabel='Package build instructions'>
+          <para>对于每个软件包：</para>
+          <orderedlist numeration="loweralpha" spacing="compact">
+            <listitem>
+              <para>使用 <command>tar</command> 程序，提取要构建的软件包。在第5章中，确保作为 <emphasis>lfs</emphasis> 用户提取软件包。</para>
+            </listitem>
+            <listitem>
+              <para>切换至提取软件包时所创建的目录。</para>
+            </listitem>
+            <listitem>
+              <para>依照本书的指令构建软件包。</para>
+            </listitem>
+            <listitem>
+              <para>退回源码目录。</para>
+            </listitem>
+            <listitem>
+              <para>除非另有说明，删除提取出的源码目录和构建过程中创建的 <filename class="directory"><replaceable>&lt;package&gt;</replaceable>-build</filename> 目录。</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </orderedlist>
+    </important>
+  </listitem>
+
+  </itemizedlist>
+
+</sect1>
