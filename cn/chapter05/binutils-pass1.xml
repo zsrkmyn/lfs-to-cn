@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../general.ent">
+  %general-entities;
+]>
+
+<sect1 id="ch-tools-binutils-pass1" role="wrap">
+  <?dbhtml filename="binutils-pass1.html"?>
+
+  <sect1info condition="script">
+    <productname>binutils</productname>
+    <productnumber>&binutils-version;</productnumber>
+    <address>&binutils-url;</address>
+  </sect1info>
+
+  <title>Binutils-&binutils-version; - 第 1 遍</title>
+
+  <indexterm zone="ch-tools-binutils-pass1">
+    <primary sortas="a-Binutils">Binutils</primary>
+    <secondary>工具链, 第 1 遍</secondary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title/>
+
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+    href="../chapter06/binutils.xml"
+    xpointer="xpointer(/sect1/sect2[1]/para[1])"/>
+
+    <segmentedlist>
+      <segtitle>&buildtime;</segtitle>
+      <segtitle>&diskspace;</segtitle>
+
+      <seglistitem>
+        <seg>&binutils-ch5p1-sbu;</seg>
+        <seg>&binutils-ch5p1-du;</seg>
+      </seglistitem>
+    </segmentedlist>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>交叉 Binutils 的安装</title>
+
+    <note><para>回去重读一下上一节中的注解。理解被标记为重要的注解会在之后为你减少不少麻烦。</para></note>
+
+    <para>Binutils 作为第一个被编译的软件包非常重要，因为 Glibc 和 GCC 都会对链接器和汇编器进行不同的测试来确定那些特性被启用。</para>
+
+    <para>Binutils 的文档建议在源码目录外，使用一个专用目录来构建 Binutils 。</para>
+
+<screen><userinput remap="pre">mkdir -v ../binutils-build
+cd ../binutils-build</userinput></screen>
+
+    <note>
+      <para>为了使本书余下部分列出的 SBU 值有意义，需要测量从开始配置到安装结束来构建这个软件包所用的时间。要简单地完成这个任务，把这些命令用 <command>time</command> 命令打包，就像这样： <userinput>time { ./configure ... &amp;&amp; ... &amp;&amp; make install; }</userinput> 。</para>
+    </note>
+
+    <note><para>第 5 章的 SBU 值和磁盘空间需求不包括测试套件的数据。</para></note>
+
+    <para>现在为 Binutils 的编译作准备：</para>
+
+<screen><userinput remap="configure">../binutils-&binutils-version;/configure     \
+    --prefix=/tools            \
+    --with-sysroot=$LFS        \
+    --with-lib-path=/tools/lib \
+    --target=$LFS_TGT          \
+    --disable-nls              \
+    --disable-werror</userinput></screen>
+
+    <variablelist>
+      <title>配置选项的含义：</title>
+
+      <varlistentry>
+        <term><parameter>--prefix=/tools</parameter></term>
+        <listitem>
+          <para>This tells the configure script to prepare to install the
+          Binutils programs in the <filename class="directory">/tools</filename>
+          directory.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><parameter>--with-sysroot=$LFS</parameter></term>
+        <listitem>
+          <para>For cross compilation, this tells the build system to look in
+          $LFS for the target system libraries as needed.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><parameter>--with-lib-path=/tools/lib</parameter></term>
+        <listitem>
+          <para>This specifies which library path the linker should be
+          configured to use.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><envar>--target=$LFS_TGT</envar></term>
+        <listitem>
+          <para>Because the machine description in the <envar>LFS_TGT</envar>
+          variable is slightly different than the value returned by the
+          <command>config.guess</command> script, this switch will tell the
+          <command>configure</command> script to adjust Binutil's build system
+          for building a cross linker.  </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><parameter>--disable-nls</parameter></term>
+        <listitem>
+          <para>This disables internationalization as i18n is not needed for the
+          temporary tools.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><parameter>--disable-werror</parameter></term>
+        <listitem>
+          <para>This prevents the build from stopping in the event that there
+          are warnings from the host's compiler.</para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+    <para>Continue with compiling the package:</para>
+
+<screen><userinput remap="make">make</userinput></screen>
+
+    <para>Compilation is now complete. Ordinarily we would now run the
+    test suite, but at this early stage the test suite framework (Tcl,
+    Expect, and DejaGNU) is not yet in place. The benefits of running the
+    tests at this point are minimal since the programs from this
+    first pass will soon be replaced by those from the second.</para>
+
+    <para>If building on x86_64, create a symlink to ensure the sanity of
+    the toolchain:</para>
+
+<screen><userinput remap="install">case $(uname -m) in
+  x86_64) mkdir -v /tools/lib &amp;&amp; ln -sv lib /tools/lib64 ;;
+esac</userinput></screen>
+
+    <para>Install the package:</para>
+
+<screen><userinput remap="install">make install</userinput></screen>
+
+  </sect2>
+
+  <sect2 role="content">
+    <title/>
+
+    <para>Details on this package are located in
+    <xref linkend="contents-binutils" role="."/></para>
+
+  </sect2>
+
+</sect1>
